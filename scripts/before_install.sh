@@ -1,3 +1,2 @@
 #!/bin/bash
-systemctl stop httpd
-rm -f /var/www/html/index.html
+yum install -y httpd
