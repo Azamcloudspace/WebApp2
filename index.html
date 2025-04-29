@@ -1,3 +1,10 @@
+#!/bin/bash
+systemctl start httpd
+systemctl enable httpd
+
+REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}')
+
+cat <<EOF > /var/www/html/index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,6 +45,8 @@
   <div>
     <h1>Welcome to CHIAZAM's Web App</h1>
     <p>Deployed using AWS CodeDeploy & GitHub</p>
+    <p>Region: ${REGION}</p>
   </div>
 </body>
 </html>
+EOF
