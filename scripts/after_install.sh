@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Get the region of the EC2 instance
-REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}')
+# Fetch the region from EC2 instance metadata
+TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
+AZ=`curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone`
+REGION="${AZ::-1}"  # Remove the last character to get the region
 
-# Update the HTML file with the region
-sed -i "s/Region: Loading.../Region: $REGION/" /var/www/html/index.html
+# Insert the region into index.html using placeholder
+sed -i "s/{{REGION}}/$REGION/g" /var/www/html/index.html
